@@ -1,0 +1,19 @@
+
+.c006-info {
+    margin-top  : 30px;
+    padding     : 3px;
+    font-family : Arial, Helvetica, Sans-serif;
+    font-size   : 1em;
+    line-height : 1.2em;
+    color       : #666666;
+    border      : 1px dotted #CCCCCC;
+}
+
+.c006-complete {
+    margin      : 50px auto auto;
+    padding     : 3px;
+    font-family : Arial, Helvetica, Sans-serif;
+    font-size   : 2em;
+    color       : #3C8FCE;
+    text-align  : center;
+}
