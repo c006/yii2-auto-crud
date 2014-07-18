@@ -17,3 +17,14 @@
     color       : #3C8FCE;
     text-align  : center;
 }
+
+.c006-title {
+    margin-bottom   : 20px;
+    font-family     : Arial, Helvetica, Sans-serif;
+    font-size       : 2em;
+    font-weight     : bold;
+    color           : #3C8FCE;
+    text-align      : left;
+    text-decoration : underline;
+
+}

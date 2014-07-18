@@ -21,9 +21,11 @@
 );
 ?>
 
+<div class="c006-title">Yii2 Auto CRUD</div>
+
 
 <div style="margin-top: 20px;">
-    <div class="c006-info">Use whichever database connection to be queried. Default is "db"</div>
+    <div class="c006-info">Use whichever database connection to be queried. Default is "db". <br> This refers to "Yii::$app->db"</div>
     <?= $form->field($model, 'db_connection') ?>
 </div>
 <div style="margin-top: 20px;">
@@ -31,7 +33,7 @@
     <?= $form->field($model, 'models_path') ?>
 </div>
 <div style="margin-top: 20px;">
-    <div class="c006-info">Namespace path to the model search directory. Default is automatically added. This can be the same as the models path as well.</div>
+    <div class="c006-info">Namespace path to the model search directory. Default is automatically added. This can be the same as the models path.</div>
     <?= $form->field($model, 'models_search_path') ?>
 </div>
 <div style="margin-top: 20px;">
