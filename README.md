@@ -29,7 +29,22 @@ to the require section of your `composer.json` file.
 Required
 --------
 
-install before using "yii2-auto-crud".
+Basic ```config/web.php```
+
+Advanced ```[backend|frontend|common]/config/main.php```
+
+>
+        'modules'    => [
+            'crud' => [
+                'class' => 'c006\crud\Module',
+            ],
+            ...
+            ...
+        ],
+
+
+
+Install before using "yii2-auto-crud".
 
 ```php composer.phar require --prefer-dist "c006/yii2-submit-spinner" "*"```
 
@@ -44,6 +59,9 @@ No options for this extension
 Usage
 -----
 
+Pretty Url's ```/crud```
+
+No pretty Url's ```index.php?r=crud```
 
 Adding demo soon.
 
