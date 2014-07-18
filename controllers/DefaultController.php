@@ -46,23 +46,24 @@
 
             $model                = new Crud();
             $model->db_connection = 'db';
-            if ( is_dir(Yii::getAlias('@app') . '/models') ) {
-                $model->models_path = 'app/models';
-                if ( !is_dir(Yii::getAlias('@app') . '/models/search') )
-                    mkdir(Yii::getAlias('@app') . '/models/search');
-                $model->models_search_path = 'app/models/search';
 
+            $basePath = str_replace('\vendor\yiisoft\yii2','', Yii::getAlias('@yii'));
+            if ( is_dir($basePath .'/models') ) {
+                $model->models_path = 'app\models';
+                if ( !is_dir($basePath . '/models/search') )
+                    mkdir($basePath . '/models/search');
+                $model->models_search_path = 'app\models\search';
             }
             else {
-                $model->models_path = 'common/models';
-                if ( !is_dir(Yii::getAlias('@common') . '/models/search') )
-                    mkdir(Yii::getAlias('@common') . '/models/search');
-                $model->models_search_path = 'common/models/search';
+                $model->models_path = 'common\models';
+                if ( !is_dir(Yii::getAlias('@common') . '\models\search') )
+                    mkdir(Yii::getAlias('@common') . '\models\search');
+                $model->models_search_path = 'common\models\search';
             }
-            if ( is_dir(Yii::getAlias('@app') . '/controllers') )
-                $model->controllers_path = 'app/controllers';
+            if ( is_dir($basePath .'/controllers') )
+                $model->controllers_path = 'app\controllers';
             else
-                $model->controllers_path = 'frontend/controllers';
+                $model->controllers_path = 'frontend\controllers';
             $model->exclude_models      = 'User, Migration';
             $model->exclude_controllers = 'Migration';
 
