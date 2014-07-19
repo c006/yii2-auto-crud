@@ -1,162 +1,114 @@
 <?php
 
-    namespace c006\crud\assets;
+    namespace c006\crud\controllers;
 
+    use c006\crud\assets\AppAssets;
+    use c006\crud\assets\AppSetup;
+    use c006\crud\models\Crud;
     use Yii;
+    use yii\filters\VerbFilter;
+    use yii\web\Controller;
 
     /**
-     * Class AppModelSetup
+     * AliasUrlController implements the CRUD actions for AliasUrl model.
      */
-    class AppSetup
+    class DefaultController extends Controller
     {
+        function init()
+        {
 
-        /**
-         * @var mixed
-         */
-        private $connection;
-
-        /**
-         * @var
-         */
-        public $models_path;
-        /**
-         * @var
-         */
-        public $models_search_path;
-        /**
-         * @var
-         */
-        public $controller_path;
+            $view = $this->getView();
+            AppAssets::register($view);
+        }
 
 
+        public function behaviors()
+        {
+
+            return [
+                'verbs' => [
+                    'class'   => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => [ 'post' ],
+                    ],
+                ],
+            ];
+        }
+
+
         /**
+         * Lists all AliasUrl models.
          *
+         * @return mixed
          */
-        function __construct($db_connection)
+        public function actionIndex()
         {
 
-            $this->connection = Yii::$app->$db_connection;
-        }
+            $model                = new Crud();
+            $model->db_connection = 'db';
 
-
-        /**
-         *
-         */
-        public function runModels($override, $array_exclude)
-        {
-
-            self::deleteModels($override, $array_exclude);
-            self::makeModels($override, $array_exclude);
-        }
-
-
-        /**
-         * @param       $override
-         * @param array $array_exclude
-         */
-        private function deleteModels($override, $array_exclude = [ ])
-        {
-
-            $alias  = AppFile::getFirstFolderInPath($this->models_path);
-            $path   = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
-            $path   = AppFile::useBackslash($path);
-            $models = $this->connection->schema->tableNames;
-            foreach ($models as $model) {
-                $modelName = self::createModelName($model);
-                if ( is_file(realpath($path . '/' . $modelName . '.php')) ) {
-                    if ( $override && in_array($modelName, $array_exclude) == FALSE ) {
-                        chmod(realpath(AppFile::useBackslash($path . '/' . $modelName . '.php')), 0777);
-                        unlink(realpath(AppFile::useBackslash($path . '/' . $modelName . '.php')));
-                    }
-                }
+            $basePath = str_replace('\vendor\yiisoft\yii2','', Yii::getAlias('@yii'));
+            if ( is_dir($basePath .'/models') ) {
+                $model->models_path = 'app\models';
+                if ( !is_dir($basePath . '/models/search') )
+                    mkdir($basePath . '/models/search');
+                $model->models_search_path = 'app\models\search';
             }
-        }
-
-
-        /**
-         * @param $override
-         * @param $array_exclude
-         */
-        private function makeModels($override, $array_exclude)
-        {
-
-            $models = $this->connection->schema->tableNames;
-            foreach ($models as $model) {
-                if ( $override && in_array($model, $array_exclude) )
-                    continue;
-                $generator             = new \yii\gii\generators\model\Generator();
-                $generator->enableI18N = TRUE;
-                $generator->tableName  = $model;
-                $generator->modelClass = self::createModelName($model);
-                $generator->template   = 'default';
-                $generator->ns         = AppFile::useForwardSlash($this->models_path);
-                $files                 = $generator->generate();
-                $alias                 = AppFile::getFirstFolderInPath($this->models_path);
-                $path                  = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
-                $path                  = AppFile::useBackslash($path . '/' . $generator->modelClass . '.php');
-                AppFile::writeFile($path, $files[0]->content);
+            else {
+                $model->models_path = 'common\models';
+                if ( !is_dir(Yii::getAlias('@common') . '\models\search') )
+                    mkdir(Yii::getAlias('@common') . '\models\search');
+                $model->models_search_path = 'common\models\search';
             }
+            if ( is_dir($basePath .'/controllers') )
+                $model->controllers_path = 'app\controllers';
+            else
+                $model->controllers_path = 'frontend\controllers';
+            $model->exclude_models      = 'User, Migration';
+            $model->exclude_controllers = 'Migration';
+
+            return $this->render('index', [
+                    'model' => $model,
+                ]
+            );
         }
 
 
-        /**
-         * @param       $override
-         * @param array $array_exclude
-         */
-        public function runCrud($override, $array_exclude = [ ])
+        public function actionProcess()
         {
 
-            $alias  = AppFile::getFirstFolderInPath($this->models_path);
-            $path   = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
-            $path   = AppFile::useBackslash($path);
-            $models = $this->connection->schema->tableNames;
-            foreach ($models as $model) {
-                $modelName = self::createModelName($model);
-                if ( is_file(realpath($path . '/' . $modelName . '.php')) ) {
-                    if ( $override && in_array($modelName, $array_exclude) == FALSE ) {
-                        self::makeCrud($modelName);
-                    }
-                }
+            if ( !isset($_POST['Crud']) )
+                $this->redirect('/');
+            $post                = $_POST['Crud'];
+            $db                  = $post['db_connection'];
+            $model_override      = (isset($post['override_models'])) ? TRUE : FALSE;
+            $controller_override = (isset($post['override_controllers'])) ? TRUE : FALSE;
+            /* */
+            $appSetup                     = new AppSetup($db);
+            $appSetup->models_path        = $post['models_path'];
+            $appSetup->models_search_path = $post['models_search_path'];
+            $appSetup->controller_path    = $post['controllers_path'];
+            //            print_r($appSetup);exit;
+            if ( $model_override ) {
+                $string = trim($post['exclude_models']);
+                $string = preg_replace('/[^\w|,]/', '', $string);
+                $array  = explode(',', $string);
+                $appSetup->runModels(TRUE, $array);
+            }
+            else {
+                $appSetup->runModels(FALSE, [ ]);
+            }
+            if ( $controller_override ) {
+                $string = trim($post['exclude_controllers']);
+                $string = preg_replace('/[^\w|,]/', '', $string);
+                $array  = explode(',', $string);
+                $appSetup->runCrud(TRUE, $array);
+            }
+            else {
+                $appSetup->runCrud(FALSE, [ ]);
             }
 
+            return $this->render('process', [ ]);
         }
 
-
-        /**
-         * @param $model
-         */
-        private function makeCrud($model)
-        {
-
-            $generator                   = new \yii\gii\generators\crud\Generator();
-            $generator->enableI18N       = TRUE;
-            $generator->modelClass       = AppFile::useForwardSlash($this->models_path . chr(92) . $model);
-            $generator->searchModelClass = AppFile::useForwardSlash($this->models_search_path . chr(92) . $model);
-            $generator->controllerClass  = AppFile::useForwardSlash($this->controller_path . chr(92) . $model . 'Controller');
-            $generator->template         = 'default';
-            $files                       = $generator->generate();
-            foreach ($files as $file) {
-                $dir = AppFile::useBackslash(AppFile::removeFileInPath($file->path));
-                if ( !is_dir($dir) )
-                    mkdir($dir);
-                AppFile::writeFile(AppFile::useBackslash($file->path), $file->content);
-            }
-        }
-
-
-        /**
-         * @param $table_name
-         *
-         * @return string
-         */
-        private function createModelName($table_name)
-        {
-
-            $output = "";
-            $array  = explode('_', $table_name);
-            foreach ($array as $name)
-                $output .= ucfirst(strtolower($name));
-
-            return $output;
-        }
     }
