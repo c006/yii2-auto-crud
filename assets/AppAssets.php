@@ -10,6 +10,11 @@
     use yii\web\AssetBundle;
     use yii\web\View;
 
+    /**
+     * Class AppAssets
+     *
+     * @package c006\crud\assets
+     */
     class AppAssets extends AssetBundle
     {
 
@@ -38,6 +43,9 @@
             'yii\bootstrap\BootstrapAsset',
         ];
 
+        /**
+         * @var array
+         */
         public $jsOptions = [
             'position' => View::POS_END,
         ];

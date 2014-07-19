@@ -15,6 +15,9 @@
      */
     class DefaultController extends Controller
     {
+        /**
+         *
+         */
         function init()
         {
 
@@ -23,6 +26,9 @@
         }
 
 
+        /**
+         * @return array
+         */
         public function behaviors()
         {
 
@@ -75,6 +81,9 @@
         }
 
 
+        /**
+         * @return string
+         */
         public function actionProcess()
         {
 

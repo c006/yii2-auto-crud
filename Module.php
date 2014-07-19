@@ -2,12 +2,23 @@
 
     namespace c006\crud;
 
+    /**
+     * Class Module
+     *
+     * @package c006\crud
+     */
     class Module extends \yii\base\Module
     {
 
+        /**
+         * @var string
+         */
         public $controllerNamespace = 'c006\crud\controllers';
 
 
+        /**
+         *
+         */
         public function init()
         {
 

@@ -2,14 +2,6 @@
 
     namespace c006\crud\assets;
 
-        /**
-         * Class AppFile
-         */
-    /**
-     * Class AppFile
-     *
-     * @package backend\assets
-     */
     /**
      * Class AppFile
      *
@@ -75,6 +67,7 @@
 
             return str_replace('/', chr(92), $path);
         }
+
 
         /**
          * @param $source
@@ -211,6 +204,21 @@
             $array = explode('/', $path);
 
             return $array[sizeof($array) - 1];
+        }
+
+
+        /**
+         * @param $path
+         *
+         * @return mixed
+         */
+        public static function getFirstFolderInPath($path)
+        {
+
+            $path  = AppFile::useBackslash($path);
+            $array = explode('/', $path);
+
+            return $array[0];
         }
 
 

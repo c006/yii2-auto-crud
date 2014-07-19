@@ -5,7 +5,9 @@
     use Yii;
 
     /**
-     * Class AppModelSetup
+     * Class AppSetup
+     *
+     * @package c006\crud\assets
      */
     class AppSetup
     {
@@ -57,7 +59,8 @@
         private function deleteModels($override, $array_exclude = [ ])
         {
 
-            $path   = Yii::getAlias('@' . $this->models_path);
+            $alias  = AppFile::getFirstFolderInPath($this->models_path);
+            $path   = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
             $path   = AppFile::useBackslash($path);
             $models = $this->connection->schema->tableNames;
             foreach ($models as $model) {
@@ -90,7 +93,9 @@
                 $generator->template   = 'default';
                 $generator->ns         = AppFile::useForwardSlash($this->models_path);
                 $files                 = $generator->generate();
-                $path                  = AppFile::useBackslash(Yii::getAlias('@' . $this->models_path) . '/' . $generator->modelClass . '.php');
+                $alias                 = AppFile::getFirstFolderInPath($this->models_path);
+                $path                  = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
+                $path                  = AppFile::useBackslash($path . '/' . $generator->modelClass . '.php');
                 AppFile::writeFile($path, $files[0]->content);
             }
         }
@@ -103,7 +108,8 @@
         public function runCrud($override, $array_exclude = [ ])
         {
 
-            $path   = Yii::getAlias('@' . $this->models_path);
+            $alias  = AppFile::getFirstFolderInPath($this->models_path);
+            $path   = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
             $path   = AppFile::useBackslash($path);
             $models = $this->connection->schema->tableNames;
             foreach ($models as $model) {
