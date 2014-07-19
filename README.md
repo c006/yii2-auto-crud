@@ -6,6 +6,8 @@ Overview
 
 This extension queries all tables in a connection database (usually db) and creates all models, controllers and views (CRUD) automatically.
 
+Create the database tables first then run this extension and it will create the majority for you.
+
 Installation
 ------------
 
