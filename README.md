@@ -8,6 +8,10 @@ This extension queries all tables in a connection database (usually db) and crea
 
 Create the database tables first then run this extension and it will create the majority for you.
 
+Demo: [http://demo.c006.us/crud](http://demo.c006.us/crud)
+
+
+
 Installation
 ------------
 
@@ -64,10 +68,6 @@ Usage
 Pretty Url's ```/crud```
 
 No pretty Url's ```index.php?r=crud```
-
-Adding demo soon.
-
-
 
 
 Comments / Suggestions
