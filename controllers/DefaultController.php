@@ -3,6 +3,7 @@
     namespace c006\crud\controllers;
 
     use c006\crud\assets\AppAssets;
+    use c006\crud\assets\AppFile;
     use c006\crud\assets\AppSetup;
     use c006\crud\models\Crud;
     use Yii;
@@ -47,7 +48,7 @@
             $model                = new Crud();
             $model->db_connection = 'db';
 
-            $basePath = str_replace('\vendor\yiisoft\yii2','', Yii::getAlias('@yii'));
+            $basePath = str_replace('/vendor/yiisoft/yii2','', AppFile::useBackslash(Yii::getAlias('@yii')));
             if ( is_dir($basePath .'/models') ) {
                 $model->models_path = 'app\models';
                 if ( !is_dir($basePath . '/models/search') )
