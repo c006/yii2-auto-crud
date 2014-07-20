@@ -70,6 +70,25 @@ Pretty Url's ```/crud```
 No pretty Url's ```index.php?r=crud```
 
 
+Errors
+---------
+
+If you see this error.
+
+![Error Message](http://demo.c006.us/images/yii2-submit-spinner/invalid-configuration.jpg)
+
+In this file ```vendor/c006/yii2-auto-crud/assets/AppAssets.php```
+
+comment out these lines.
+
+>
+        public $depends = [
+            // 'yii\web\YiiAsset',
+            // 'yii\widgets\ActiveFormAsset',
+            // 'yii\bootstrap\BootstrapAsset',
+        ];
+
+
 Comments / Suggestions
 --------------------
 
