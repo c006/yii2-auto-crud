@@ -10,6 +10,9 @@
             "email": "jchambers.dev@gmail.com"
         }
     ],
+    "require-dev": {
+        "c006/yii2-activeform": "dev-master"
+    },
     "autoload"   : {
         "psr-4": {
             "c006\\crud\\": ""
