@@ -52,7 +52,7 @@ Advanced ```[backend|frontend|common]/config/main.php```
 
 Install before using "yii2-auto-crud".
 
-```php composer.phar require --prefer-dist "c006/yii2-submit-spinner" "dev-master"```
+```php composer.phar require --prefer-dist "c006/yii2-submit-spinner" "*"```
 
 
 Options
