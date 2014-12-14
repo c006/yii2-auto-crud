@@ -3,24 +3,27 @@
  */
 
 jQuery(function () {
-    jQuery('#form-crud').on("click", "input[type=checkbox]",
-        function () {
-            c006_checkboxes();
-        });
-    function c006_checkboxes() {
-        var $cb = jQuery('#crud-exclude_models').parent().parent();
-        $cb.hide();
-        if (jQuery('#crud-override_models').is(':checked')) {
-            $cb.show("fast");
-        }
-        $cb = jQuery('#crud-exclude_controllers').parent().parent();
-        $cb.hide();
-        if (jQuery('#crud-override_controllers').is(':checked')) {
-            $cb.show("fast");
-        }
-    }
+    jQuery('.c006-activeform-toggle-container')
+        .bind("click",
+              function () {
+                  /* This is not ideal, but it works for now */
+                  setTimeout(function () {
+                      var $elm = jQuery('#crud-exclude_models').parent().parent();
+                      $elm.hide();
+                      var $ow = jQuery('#crud-overwrite_models');
+                      if ($ow.val() == "1") {
+                          $elm.show("fast");
+                      }
+                      $elm = jQuery('#crud-exclude_controllers').parent().parent();
+                      $elm.hide();
+                      $ow = jQuery('#crud-overwrite_controllers');
+                      if ($ow.val() == "1") {
+                          $elm.show("fast");
+                      }
+                  }, 100);
+              })
+        .trigger('click');
 
-    c006_checkboxes();
 });
 
 

@@ -32,11 +32,11 @@ class Crud extends ActiveRecord
     /**
      * @var bool
      */
-    public $overwrite_models = FALSE;
+    public $overwrite_models = 0;
     /**
      * @var bool
      */
-    public $overwrite_controllers = FALSE;
+    public $overwrite_controllers = 0;
     /**
      * @var
      */

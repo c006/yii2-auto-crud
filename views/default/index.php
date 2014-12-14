@@ -6,7 +6,7 @@
  * Time: 12:13 PM
  */
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use c006\activeForm\ActiveForm;
 
 /** @var $model /c006/crud/model/Crud */
 ?>
@@ -60,7 +60,7 @@ use yii\widgets\ActiveForm;
 </div>
 <div style="margin-top: 20px;">
     <div class="c006-info">Overwrite existing models</div>
-    <?= $form->field($model, 'overwrite_models')->checkbox() ?>
+    <?= $form->field($model, 'overwrite_models')->toggle() ?>
 </div>
 <div style="margin-top: 20px;">
     <div class="c006-info">Comma delimited list of models to skip. Note, do NOT add .php</div>
@@ -68,7 +68,7 @@ use yii\widgets\ActiveForm;
 </div>
 <div style="margin-top: 20px;">
     <div class="c006-info">Overwrite existing controllers.</div>
-    <?= $form->field($model, 'overwrite_controllers')->checkbox() ?>
+    <?= $form->field($model, 'overwrite_controllers')->toggle() ?>
 </div>
 <div style="margin-top: 20px;">
     <div class="c006-info">Comma delimited list of controllers to skip. Note, do NOT add .php</div>
