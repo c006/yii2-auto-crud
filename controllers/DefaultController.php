@@ -20,7 +20,6 @@ class DefaultController extends Controller
      */
     function init()
     {
-
         $view = $this->getView();
         AppAssets::register($view);
     }
@@ -49,11 +48,9 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-
-        $model = new Crud();
+        $model                = new Crud();
         $model->db_connection = 'db';
-
-        $basePath = str_replace('/vendor/yiisoft/yii2', '', AppFile::useBackslash(Yii::getAlias('@yii')));
+        $basePath             = str_replace('/vendor/yiisoft/yii2', '', AppFile::useBackslash(Yii::getAlias('@yii')));
         if (is_dir($basePath . '/models')) {
             $model->models_path = 'app\models';
             if (!is_dir($basePath . '/models/search'))
@@ -69,7 +66,7 @@ class DefaultController extends Controller
             $model->controllers_path = 'app\controllers';
         else
             $model->controllers_path = 'frontend\controllers';
-        $model->exclude_models = 'User, Migration';
+        $model->exclude_models      = 'User, Migration';
         $model->exclude_controllers = 'Migration';
 
         return $this->render('index', [
@@ -84,23 +81,23 @@ class DefaultController extends Controller
      */
     public function actionProcess()
     {
-
         if (!isset($_POST['Crud']))
             $this->redirect('/');
-        $post = $_POST['Crud'];
-        $db = $post['db_connection'];
-        $model_override = (isset($post['override_models']) && $post['override_models']) ? TRUE : FALSE;
+        $post                = $_POST['Crud'];
+        $db                  = $post['db_connection'];
+        $model_override      = (isset($post['override_models']) && $post['override_models']) ? TRUE : FALSE;
         $controller_override = (isset($post['override_controllers']) && $post['override_controllers']) ? TRUE : FALSE;
+        $use_toggle          = (isset($post['use_toggle']) && $post['use_toggle']) ? TRUE : FALSE;
         /* */
-        $appSetup = new AppSetup($db);
-        $appSetup->models_path = $post['models_path'];
+        $appSetup                     = new AppSetup($db);
+        $appSetup->models_path        = $post['models_path'];
         $appSetup->models_search_path = $post['models_search_path'];
-        $appSetup->controller_path = $post['controllers_path'];
+        $appSetup->controller_path    = $post['controllers_path'];
         //            print_r($appSetup);exit;
         if ($model_override) {
             $string = trim($post['exclude_models']);
             $string = preg_replace('/[^\w|,]/', '', $string);
-            $array = explode(',', $string);
+            $array  = explode(',', $string);
             $appSetup->runModels(TRUE, $array);
         } else {
             $appSetup->runModels(FALSE, []);
@@ -108,10 +105,10 @@ class DefaultController extends Controller
         if ($controller_override) {
             $string = trim($post['exclude_controllers']);
             $string = preg_replace('/[^\w|,]/', '', $string);
-            $array = explode(',', $string);
-            $appSetup->runCrud(TRUE, $array);
+            $array  = explode(',', $string);
+            $appSetup->runCrud(TRUE, $array, $use_toggle);
         } else {
-            $appSetup->runCrud(FALSE, []);
+            $appSetup->runCrud(FALSE, [], $use_toggle);
         }
 
         return $this->render('process', []);

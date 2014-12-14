@@ -46,5 +46,9 @@ class Crud extends ActiveRecord
      */
     public $exclude_controllers;
 
+    /**
+     * @var int
+     */
+    public $use_toggle = 0;
 
 }

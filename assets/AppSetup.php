@@ -36,7 +36,6 @@ class AppSetup
      */
     function __construct($db_connection)
     {
-
         $this->connection = Yii::$app->$db_connection;
     }
 
@@ -47,7 +46,6 @@ class AppSetup
      */
     public function runModels($override, $array_exclude)
     {
-
         self::deleteModels($override, $array_exclude);
         self::makeModels($override, $array_exclude);
     }
@@ -59,10 +57,9 @@ class AppSetup
      */
     private function deleteModels($override, $array_exclude = [])
     {
-
-        $alias = AppFile::getFirstFolderInPath($this->models_path);
-        $path = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
-        $path = AppFile::useBackslash($path);
+        $alias  = AppFile::getFirstFolderInPath($this->models_path);
+        $path   = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
+        $path   = AppFile::useBackslash($path);
         $models = $this->connection->schema->tableNames;
         foreach ($models as $model) {
             $modelName = self::createModelName($model);
@@ -89,17 +86,18 @@ class AppSetup
             if ((!in_array($model, $array_exclude) && $override)
                 || (!$override)
             ) {
-                $generator = new \yii\gii\generators\model\Generator();
+                $generator             = new \yii\gii\generators\model\Generator();
                 $generator->enableI18N = TRUE;
-                $generator->tableName = $model;
+                $generator->tableName  = $model;
                 $generator->modelClass = self::createModelName($model);
-                $generator->template = 'default';
-                $generator->ns = AppFile::useForwardSlash($this->models_path);
-                $files = $generator->generate();
-                $alias = AppFile::getFirstFolderInPath($this->models_path);
-                $path = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
-                $path = AppFile::useBackslash($path . '/' . $generator->modelClass . '.php');
-                AppFile::writeFile($path, $files[0]->content);
+                $generator->template   = 'default';
+                $generator->ns         = AppFile::useForwardSlash($this->models_path);
+                $files                 = $generator->generate();
+                $alias                 = AppFile::getFirstFolderInPath($this->models_path);
+                $path                  = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
+                $path                  = AppFile::useBackslash($path . '/' . $generator->modelClass . '.php');
+                $content               = $files[0]->content;
+                AppFile::writeFile($path, $content);
             }
         }
     }
@@ -109,12 +107,11 @@ class AppSetup
      * @param       $override
      * @param array $array_exclude
      */
-    public function runCrud($override, $array_exclude = [])
+    public function runCrud($override, $array_exclude = [], $use_toggle = FALSE)
     {
-
-        $alias = AppFile::getFirstFolderInPath($this->models_path);
-        $path = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
-        $path = AppFile::useBackslash($path);
+        $alias  = AppFile::getFirstFolderInPath($this->models_path);
+        $path   = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
+        $path   = AppFile::useBackslash($path);
         $models = $this->connection->schema->tableNames;
         foreach ($models as $model) {
             $modelName = self::createModelName($model);
@@ -122,7 +119,7 @@ class AppSetup
                 if ((!in_array($model, $array_exclude) && $override)
                     || (!$override)
                 ) {
-                    self::makeCrud($modelName);
+                    self::makeCrud($modelName, $use_toggle);
                 }
             }
         }
@@ -131,23 +128,29 @@ class AppSetup
 
 
     /**
-     * @param $model
+     * @param      $model
+     * @param bool $use_toggle
      */
-    private function makeCrud($model)
+    private function makeCrud($model, $use_toggle = FALSE)
     {
-
-        $generator = new \yii\gii\generators\crud\Generator();
-        $generator->enableI18N = TRUE;
-        $generator->modelClass = AppFile::useForwardSlash($this->models_path . chr(92) . $model);
+        $generator                   = new \yii\gii\generators\crud\Generator();
+        $generator->enableI18N       = TRUE;
+        $generator->modelClass       = AppFile::useForwardSlash($this->models_path . chr(92) . $model);
         $generator->searchModelClass = AppFile::useForwardSlash($this->models_search_path . chr(92) . $model);
-        $generator->controllerClass = AppFile::useForwardSlash($this->controller_path . chr(92) . $model . 'Controller');
-        $generator->template = 'default';
-        $files = $generator->generate();
+        $generator->controllerClass  = AppFile::useForwardSlash($this->controller_path . chr(92) . $model . 'Controller');
+        $generator->template         = 'default';
+        $files                       = $generator->generate();
         foreach ($files as $file) {
             $dir = AppFile::useBackslash(AppFile::removeFileInPath($file->path));
             if (!is_dir($dir))
                 mkdir($dir);
-            AppFile::writeFile(AppFile::useBackslash($file->path), $file->content);
+            $content = $file->content;
+            if ($use_toggle) {
+                $content = preg_replace('/->checkbox/', '->toggle', $content);
+                $content = preg_replace('/(yii.widgets.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
+                $content = preg_replace('/(yii.bootstrap.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
+            }
+            AppFile::writeFile(AppFile::useBackslash($file->path), $content);
         }
     }
 
@@ -159,9 +162,8 @@ class AppSetup
      */
     private function createModelName($table_name)
     {
-
         $output = "";
-        $array = explode('_', $table_name);
+        $array  = explode('_', $table_name);
         foreach ($array as $name)
             $output .= ucfirst(strtolower($name));
 

@@ -7,8 +7,7 @@
     line-height : 1.2em;
     color       : #666666;
     border      : 1px dotted #CCCCCC;
-}
-
+    }
 .c006-complete {
     margin      : 50px auto auto;
     padding     : 3px;
@@ -16,8 +15,7 @@
     font-size   : 2em;
     color       : #3C8FCE;
     text-align  : center;
-}
-
+    }
 .c006-title {
     margin-bottom   : 20px;
     font-family     : Arial, Helvetica, Sans-serif;
@@ -27,4 +25,7 @@
     text-align      : left;
     text-decoration : underline;
 
-}
+    }
+.c006-row {
+    margin-top : 30px;
+    }
