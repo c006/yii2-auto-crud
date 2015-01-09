@@ -41,7 +41,9 @@ use yii\helpers\Html;
 <?php endif ?>
 <div class="c006-title">Yii2 Auto CRUD</div>
 <div class="c006-row">
-    <div class="c006-info">Use whichever database connection to be queried. Default is "db". <br> This refers to "Yii::$app->db"</div>
+    <div class="c006-info">Use whichever database connection to be queried. Default is "db". <br> This refers to
+        "Yii::$app->db"
+    </div>
     <?= $form->field($model, 'db_connection') ?>
 </div>
 <div class="c006-row">
@@ -49,12 +51,24 @@ use yii\helpers\Html;
     <?= $form->field($model, 'models_path') ?>
 </div>
 <div class="c006-row">
-    <div class="c006-info">Namespace path to the model search directory. Default is automatically added. This can be the same as the models path.</div>
+    <div class="c006-info">Namespace path to the model search directory. Default is automatically added. This can be the
+        same as the models path.
+    </div>
     <?= $form->field($model, 'models_search_path') ?>
 </div>
 <div class="c006-row">
-    <div class="c006-info">Namespace path to the controllers directory. Default is automatically added. Note, views will be added based on the controller path.</div>
+    <div class="c006-info">Namespace path to the controllers directory. Default is automatically added. Note, views will
+        be added based on the controller path.
+    </div>
     <?= $form->field($model, 'controllers_path') ?>
+</div>
+<div style="margin-top: 20px;">
+    <div class="c006-info">Select tables</div>
+    <?= $form->field($model, 'database_tables')->dropDownList(['00' => ' '] + $tables) ?>
+</div>
+<div style="margin-top: 20px;">
+    <div class="c006-info">Tables to be processed</div>
+    <?= $form->field($model, 'tables') ?>
 </div>
 <div class="c006-row">
     <div class="c006-info">Overwrite existing models</div>

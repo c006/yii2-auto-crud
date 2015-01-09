@@ -70,11 +70,19 @@ class DefaultController extends Controller
         $model->exclude_controllers = 'Migration';
 
         return $this->render('index', [
-                                        'model' => $model,
+                                        'model'  => $model,
+                                        'tables' => self::getTables(),
                                     ]
         );
     }
 
+    /**
+     * @return \string[]
+     */
+    public function getTables()
+    {
+        return \Yii::$app->db->getSchema()->getTableNames('', TRUE);
+    }
 
     /**
      * @return string
@@ -83,8 +91,9 @@ class DefaultController extends Controller
     {
         if (!isset($_POST['Crud']))
             $this->redirect('/');
-        $post                = $_POST['Crud'];
-        $db                  = $post['db_connection'];
+        $post   = $_POST['Crud'];
+        $db     = $post['db_connection'];
+        $tables = (isset($post['tables'])) ? explode(',', $post['tables']) : [];;
         $model_override      = (isset($post['override_models']) && $post['override_models']) ? TRUE : FALSE;
         $controller_override = (isset($post['override_controllers']) && $post['override_controllers']) ? TRUE : FALSE;
         $use_toggle          = (isset($post['use_toggle']) && $post['use_toggle']) ? TRUE : FALSE;
@@ -98,17 +107,17 @@ class DefaultController extends Controller
             $string = trim($post['exclude_models']);
             $string = preg_replace('/[^\w|,]/', '', $string);
             $array  = explode(',', $string);
-            $appSetup->runModels(TRUE, $array);
+            $appSetup->runModels(TRUE, $array, $tables);
         } else {
-            $appSetup->runModels(FALSE, []);
+            $appSetup->runModels(FALSE, [], $tables);
         }
         if ($controller_override) {
             $string = trim($post['exclude_controllers']);
             $string = preg_replace('/[^\w|,]/', '', $string);
             $array  = explode(',', $string);
-            $appSetup->runCrud(TRUE, $array, $use_toggle);
+            $appSetup->runCrud(TRUE, $array, $use_toggle, $tables);
         } else {
-            $appSetup->runCrud(FALSE, [], $use_toggle);
+            $appSetup->runCrud(FALSE, [], $use_toggle, $tables);
         }
 
         return $this->render('process', []);

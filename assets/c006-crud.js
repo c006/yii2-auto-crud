@@ -23,7 +23,29 @@ jQuery(function () {
                   }, 100);
               })
         .trigger('click');
-
+    jQuery('label[for=crud-database_tables]')
+        .append('<span class="c006-add-all">add all</span>')
+        .click(function () {
+                   var _html = '';
+                   jQuery('#crud-database_tables')
+                       .find('option')
+                       .each(function (item) {
+                                 _html += ',' + jQuery(this).html();
+                             });
+                   jQuery('#crud-tables').val(_html.replace(/\s+/gi, '').replace(/,+/gi, ',').replace(/^,/, ''));
+               });
+    jQuery('#crud-database_tables')
+        .bind('change',
+              function () {
+                  var val = jQuery(this).find('option:selected').text();
+                  if (val) {
+                      var $elm = jQuery('#crud-tables');
+                      var val2 = $elm.val().replace(val + ',', '');
+                      val = val2 + ',' + val;
+                      val = val.replace(/\s+/gi, '').replace(/,+/gi, ',').replace(/^,/, '');
+                      $elm.val(val);
+                  }
+              });
 });
 
 

@@ -2,6 +2,7 @@
 
 namespace c006\crud\assets;
 
+use c006\crud\assets\AppFile;
 use Yii;
 
 /**
@@ -13,23 +14,24 @@ class AppSetup
 {
 
     /**
-     * @var mixed
+     * @var
      */
-    private $connection;
+    public $models_path;
 
     /**
      * @var
      */
-    public $models_path;
-    /**
-     * @var
-     */
     public $models_search_path;
+
     /**
      * @var
      */
     public $controller_path;
 
+    /**
+     * @var mixed
+     */
+    private $connection;
 
     /**
      * @param $db_connection
@@ -41,26 +43,28 @@ class AppSetup
 
 
     /**
-     * @param $override
-     * @param $array_exclude
+     * @param       $override
+     * @param       $array_exclude
+     * @param array $models
      */
-    public function runModels($override, $array_exclude)
+    public function runModels($override, $array_exclude, $models = array())
     {
-        self::deleteModels($override, $array_exclude);
-        self::makeModels($override, $array_exclude);
+        self::deleteModels($override, $array_exclude, $models);
+        self::makeModels($override, $array_exclude, $models);
     }
 
 
     /**
      * @param       $override
      * @param array $array_exclude
+     * @param array $models
      */
-    private function deleteModels($override, $array_exclude = [])
+    private function deleteModels($override, $array_exclude = [], $models = array())
     {
-        $alias  = AppFile::getFirstFolderInPath($this->models_path);
-        $path   = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
-        $path   = AppFile::useBackslash($path);
-        $models = $this->connection->schema->tableNames;
+        $path = Yii::getAlias('@' . $this->models_path);
+        $path = AppFile::useForwardSlash($path);
+        if (!sizeof($models))
+            $models = $this->connection->schema->tableNames;
         foreach ($models as $model) {
             $modelName = self::createModelName($model);
             if (is_file(realpath($path . '/' . $modelName . '.php'))) {
@@ -74,14 +78,30 @@ class AppSetup
         }
     }
 
+    /**
+     * @param $table_name
+     *
+     * @return string
+     */
+    private function createModelName($table_name)
+    {
+        $output = "";
+        $array  = explode('_', $table_name);
+        foreach ($array as $name)
+            $output .= ucfirst(strtolower($name));
+
+        return $output;
+    }
 
     /**
-     * @param $override
-     * @param $array_exclude
+     * @param       $override
+     * @param       $array_exclude
+     * @param array $models
      */
-    private function makeModels($override, $array_exclude)
+    private function makeModels($override, $array_exclude, $models = array())
     {
-        $models = $this->connection->schema->tableNames;
+        if (!sizeof($models))
+            $models = $this->connection->schema->tableNames;
         foreach ($models as $model) {
             if ((!in_array($model, $array_exclude) && $override)
                 || (!$override)
@@ -93,8 +113,7 @@ class AppSetup
                 $generator->template   = 'default';
                 $generator->ns         = AppFile::useForwardSlash($this->models_path);
                 $files                 = $generator->generate();
-                $alias                 = AppFile::getFirstFolderInPath($this->models_path);
-                $path                  = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
+                $path                  = Yii::getAlias('@' . $this->models_path);
                 $path                  = AppFile::useBackslash($path . '/' . $generator->modelClass . '.php');
                 $content               = $files[0]->content;
                 AppFile::writeFile($path, $content);
@@ -102,17 +121,18 @@ class AppSetup
         }
     }
 
-
     /**
      * @param       $override
      * @param array $array_exclude
+     * @param bool  $use_toggle
+     * @param array $models
      */
-    public function runCrud($override, $array_exclude = [], $use_toggle = FALSE)
+    public function runCrud($override, $array_exclude = [], $use_toggle = FALSE, $models = array())
     {
-        $alias  = AppFile::getFirstFolderInPath($this->models_path);
-        $path   = Yii::getAlias('@' . $alias) . '' . str_replace($alias, '', $this->models_path);
-        $path   = AppFile::useBackslash($path);
-        $models = $this->connection->schema->tableNames;
+        $path = Yii::getAlias('@' . $this->models_path);
+        $path = AppFile::useForwardSlash($path);
+        if (!sizeof($models))
+            $models = $this->connection->schema->tableNames;
         foreach ($models as $model) {
             $modelName = self::createModelName($model);
             if (is_file(realpath($path . '/' . $modelName . '.php'))) {
@@ -125,7 +145,6 @@ class AppSetup
         }
 
     }
-
 
     /**
      * @param      $model
@@ -141,32 +160,25 @@ class AppSetup
         $generator->template         = 'default';
         $files                       = $generator->generate();
         foreach ($files as $file) {
-            $dir = AppFile::useBackslash(AppFile::removeFileInPath($file->path));
+            $file->path = AppFile::useBackslash($file->path);
+            $dir        = AppFile::removeFileInPath(AppFile::useBackslash($file->path));
             if (!is_dir($dir))
                 mkdir($dir);
             $content = $file->content;
-            if ($use_toggle) {
-                $content = preg_replace('/->checkbox/', '->toggle', $content);
-                $content = preg_replace('/(yii.widgets.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
-                $content = preg_replace('/(yii.bootstrap.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
+            if (strpos($file->path, '/views/') != FALSE) {
+                if ($use_toggle) {
+                    $content = preg_replace('/->checkbox/', '->toggle', $content);
+                    $content = preg_replace('/(yii.widgets.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
+                    $content = preg_replace('/(yii.bootstrap.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
+                }
+                $path       = AppFile::useBackslash(Yii::getAlias('@' . $this->controller_path)) . '/' . strtolower($model);
+                $file->path = AppFile::fileFromPath($file->path);
+                $path       = preg_replace('/\/controllers\//', '/views/', $path);
+                if (!is_dir($path))
+                    mkdir($path);
+                $file->path = $path . '/' . $file->path;
             }
-            AppFile::writeFile(AppFile::useBackslash($file->path), $content);
+            AppFile::writeFile($file->path, $content);
         }
-    }
-
-
-    /**
-     * @param $table_name
-     *
-     * @return string
-     */
-    private function createModelName($table_name)
-    {
-        $output = "";
-        $array  = explode('_', $table_name);
-        foreach ($array as $name)
-            $output .= ucfirst(strtolower($name));
-
-        return $output;
     }
 }
