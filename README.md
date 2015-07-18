@@ -8,7 +8,7 @@ This extension queries all tables in a connection database (usually db) and crea
 
 Create the database tables first then run this extension and it will create the majority for you.
 
-Demo: [http://demo.c006.us/crud](http://demo.c006.us/crud)
+Demo: [http://demo.c006.us](http://demo.c006.us)
 
 
 
@@ -52,7 +52,7 @@ Advanced ```[backend|frontend|common]/config/main.php```
 
 Install before using "yii2-auto-crud".
 
-```php composer.phar require --prefer-dist "c006/yii2-submit-spinner" "*"```
+```php composer.phar require --prefer-dist "c006/yii2-submit-spinner" "dev-master"```
 
 
 Options
@@ -73,20 +73,6 @@ No pretty Url's ```index.php?r=crud```
 Errors
 ---------
 
-If you see this error.
-
-![Error Message](http://demo.c006.us/images/yii2-submit-spinner/invalid-configuration.jpg)
-
-In this file ```vendor/c006/yii2-auto-crud/assets/AppAssets.php```
-
-comment out these lines.
-
->
-        public $depends = [
-            // 'yii\web\YiiAsset',
-            // 'yii\widgets\ActiveFormAsset',
-            // 'yii\bootstrap\BootstrapAsset',
-        ];
 
 
 Comments / Suggestions
