@@ -89,16 +89,12 @@ comment out these lines.
         ];
 
 
-Updates
+Comments / Suggestions
 --------------------
 
-+ Can select single table
-+ Uses yii2-ActiveForm (c006)
-    + Toggle option for checkboxes
+Please provide any helpful feedback or requests.
 
-
-
-
+Thanks.
 
 
 

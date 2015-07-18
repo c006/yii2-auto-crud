@@ -130,9 +130,9 @@ class AppFile
     public static function  fileFromPath($path)
     {
         $path = str_replace('\\', '/', $path);
-        $f    = explode('/', $path);
+        $f = explode('/', $path);
 
-        return $f[sizeof($f) - 1];
+        return $f[ sizeof($f) - 1 ];
     }
 
     /**
@@ -142,10 +142,10 @@ class AppFile
      */
     public static function getLastFolderInPath($path)
     {
-        $path  = AppFile::useBackslash($path);
+        $path = AppFile::useBackslash($path);
         $array = explode('/', $path);
 
-        return $array[sizeof($array) - 1];
+        return $array[ sizeof($array) - 1 ];
     }
 
     /**
@@ -167,7 +167,7 @@ class AppFile
      */
     public static function getFirstFolderInPath($path)
     {
-        $path  = AppFile::useBackslash($path);
+        $path = AppFile::useBackslash($path);
         $array = explode('/', $path);
 
         return $array[0];
@@ -233,7 +233,7 @@ class AppFile
     {
         $f = explode('.', $file_name);
 
-        return $f[sizeof($f) - 1];
+        return $f[ sizeof($f) - 1 ];
     }
 
     /**
@@ -297,7 +297,7 @@ class AppFile
      */
     public static function cleanFileName($file)
     {
-        $ext  = self::fileExtension($file);
+        $ext = self::fileExtension($file);
         $file = self::removeFileExtension($file);
         $file = preg_replace('/[^0-9|A-Z|a-z|_|-]/', '', $file);
 
@@ -312,7 +312,7 @@ class AppFile
     public static function  removeFileExtension($file_name)
     {
         $f = explode('.', $file_name);
-        unset($f[sizeof($f) - 1]);
+        unset($f[ sizeof($f) - 1 ]);
 
         return implode('.', $f);
     }

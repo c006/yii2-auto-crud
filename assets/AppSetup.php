@@ -86,7 +86,7 @@ class AppSetup
     private function createModelName($table_name)
     {
         $output = "";
-        $array  = explode('_', $table_name);
+        $array = explode('_', $table_name);
         foreach ($array as $name)
             $output .= ucfirst(strtolower($name));
 
@@ -106,16 +106,16 @@ class AppSetup
             if ((!in_array($model, $array_exclude) && $override)
                 || (!$override)
             ) {
-                $generator             = new \yii\gii\generators\model\Generator();
+                $generator = new \yii\gii\generators\model\Generator();
                 $generator->enableI18N = TRUE;
-                $generator->tableName  = $model;
+                $generator->tableName = $model;
                 $generator->modelClass = self::createModelName($model);
-                $generator->template   = 'default';
-                $generator->ns         = AppFile::useForwardSlash($this->models_path);
-                $files                 = $generator->generate();
-                $path                  = Yii::getAlias('@' . $this->models_path);
-                $path                  = AppFile::useBackslash($path . '/' . $generator->modelClass . '.php');
-                $content               = $files[0]->content;
+                $generator->template = 'default';
+                $generator->ns = AppFile::useForwardSlash($this->models_path);
+                $files = $generator->generate();
+                $path = Yii::getAlias('@' . $this->models_path);
+                $path = AppFile::useBackslash($path . '/' . $generator->modelClass . '.php');
+                $content = $files[0]->content;
                 AppFile::writeFile($path, $content);
             }
         }
@@ -124,26 +124,26 @@ class AppSetup
     /**
      * @param       $override
      * @param array $array_exclude
-     * @param bool  $use_toggle
+     * @param bool $use_toggle
      * @param array $models
      */
     public function runCrud($override, $array_exclude = [], $use_toggle = FALSE, $models = array())
     {
         $path = Yii::getAlias('@' . $this->models_path);
-        $path = AppFile::useForwardSlash($path);
+        $path = AppFile::useBackslash($path);
         if (!sizeof($models))
             $models = $this->connection->schema->tableNames;
         foreach ($models as $model) {
             $modelName = self::createModelName($model);
-            if (is_file(realpath($path . '/' . $modelName . '.php'))) {
-                if ((!in_array($model, $array_exclude) && $override)
-                    || (!$override)
-                ) {
+            $path = AppFile::useBackslash($path . '/' . $modelName . '.php');
+            if (is_file(realpath($path))) {
+                if (in_array($model, $array_exclude) == FALSE || $override == TRUE) {
                     self::makeCrud($modelName, $use_toggle);
                 }
+            } else {
+                die("Model does not exist: " . $path);
             }
         }
-
     }
 
     /**
@@ -152,16 +152,18 @@ class AppSetup
      */
     private function makeCrud($model, $use_toggle = FALSE)
     {
-        $generator                   = new \yii\gii\generators\crud\Generator();
-        $generator->enableI18N       = TRUE;
-        $generator->modelClass       = AppFile::useForwardSlash($this->models_path . chr(92) . $model);
+        $generator = new \yii\gii\generators\crud\Generator();
+        $generator->enableI18N = TRUE;
+        $generator->modelClass = AppFile::useForwardSlash($this->models_path . chr(92) . $model);
         $generator->searchModelClass = AppFile::useForwardSlash($this->models_search_path . chr(92) . $model);
-        $generator->controllerClass  = AppFile::useForwardSlash($this->controller_path . chr(92) . $model . 'Controller');
-        $generator->template         = 'default';
-        $files                       = $generator->generate();
+        $generator->controllerClass = AppFile::useForwardSlash($this->controller_path . chr(92) . $model . 'Controller');
+        $generator->template = 'default';
+        $files = $generator->generate();
+
         foreach ($files as $file) {
             $file->path = AppFile::useBackslash($file->path);
-            $dir        = AppFile::removeFileInPath(AppFile::useBackslash($file->path));
+            echo "<BR>" . $file->path;
+            $dir = AppFile::removeFileInPath($file->path);
             if (!is_dir($dir))
                 mkdir($dir);
             $content = $file->content;
@@ -171,9 +173,11 @@ class AppSetup
                     $content = preg_replace('/(yii.widgets.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
                     $content = preg_replace('/(yii.bootstrap.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
                 }
-                $path       = AppFile::useBackslash(Yii::getAlias('@' . $this->controller_path)) . '/' . strtolower($model);
+                $dir_name = trim(preg_replace('/([A-Z])/', " $1", $model));
+                $dir_name = strtolower(str_replace(' ', '-', $dir_name));
+                $path = AppFile::useBackslash(Yii::getAlias('@' . $this->controller_path)) . '/' . $dir_name;
                 $file->path = AppFile::fileFromPath($file->path);
-                $path       = preg_replace('/\/controllers\//', '/views/', $path);
+                $path = preg_replace('/\/controllers\//', '/views/', $path);
                 if (!is_dir($path))
                     mkdir($path);
                 $file->path = $path . '/' . $file->path;
