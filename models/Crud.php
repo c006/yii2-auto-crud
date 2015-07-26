@@ -68,4 +68,19 @@ class Crud extends ActiveRecord
      */
     public $tables = '';
 
+    /**
+     * @var string
+     */
+    public $namespace = '';
+
+    /**
+     * @var string
+     */
+    public $crud_template = 'sample';
+
+    /**
+     * @var string
+     */
+    public $crud_template_path = '@c006/crud/templates/sample';
+
 }

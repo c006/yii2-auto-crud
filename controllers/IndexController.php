@@ -6,7 +6,6 @@ use c006\crud\assets\AppAssets;
 use c006\crud\assets\AppFile;
 use c006\crud\assets\AppSetup;
 use c006\crud\models\Crud;
-use common\assets\AppHelpers;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -51,9 +50,9 @@ class IndexController extends Controller
         $view = $this->getView();
         AppAssets::register($view);
 
-        $model                = new Crud();
+        $model = new Crud();
         $model->db_connection = 'db';
-        $basePath             = str_replace('/vendor/yiisoft/yii2', '', AppFile::useBackslash(Yii::getAlias('@yii')));
+        $basePath = str_replace('/vendor/yiisoft/yii2', '', AppFile::useBackslash(Yii::getAlias('@yii')));
         if (is_dir($basePath . '/models')) {
             $model->models_path = 'app/models';
             if (!is_dir($basePath . '/models/search'))
@@ -69,13 +68,13 @@ class IndexController extends Controller
             $model->controllers_path = 'app/controllers';
         else
             $model->controllers_path = 'frontend/controllers';
-        $model->exclude_models      = 'User, Migration';
-        $model->exclude_controllers = 'Migration';
+        $model->exclude_models = 'user,migration';
+        $model->exclude_controllers = 'user,migration';
 
         return $this->render('index', [
-                                        'model'  => $model,
-                                        'tables' => self::getTables(),
-                                    ]
+                'model'  => $model,
+                'tables' => self::getTables(),
+            ]
         );
     }
 
@@ -94,22 +93,25 @@ class IndexController extends Controller
     {
         if (!isset($_POST['Crud']))
             $this->redirect('/');
-        $post   = $_POST['Crud'];
-        $db     = $post['db_connection'];
+        $post = $_POST['Crud'];
+        $db = $post['db_connection'];
         $tables = (isset($post['tables'])) ? explode(',', $post['tables']) : [];;
-        $model_override      = (isset($post['override_models']) && $post['override_models']) ? TRUE : FALSE;
+        $model_override = (isset($post['override_models']) && $post['override_models']) ? TRUE : FALSE;
         $controller_override = (isset($post['override_controllers']) && $post['override_controllers']) ? TRUE : FALSE;
-        $use_toggle          = (isset($post['use_toggle']) && $post['use_toggle']) ? TRUE : FALSE;
+        $use_toggle = 1; //(isset($post['use_toggle']) && $post['use_toggle']) ? TRUE : FALSE;
         /* */
-        $appSetup                     = new AppSetup($db);
-        $appSetup->models_path        = $post['models_path'];
+        $appSetup = new AppSetup($db);
+        $appSetup->models_path = $post['models_path'];
         $appSetup->models_search_path = $post['models_search_path'];
-        $appSetup->controller_path    = $post['controllers_path'];
-        //            print_r($appSetup);exit;
+        $appSetup->controller_path = $post['controllers_path'];
+        $appSetup->namespace = $post['namespace'];
+        $appSetup->crud_template = $post['crud_template'];
+        $appSetup->crud_template_path = $post['crud_template_path'];
+
         if ($model_override == TRUE) {
             $string = trim($post['exclude_models']);
             $string = preg_replace('/[^\w|,]/', '', $string);
-            $array  = explode(',', $string);
+            $array = explode(',', $string);
             $appSetup->runModels(TRUE, $array, $tables);
         } else {
             $appSetup->runModels(FALSE, [], $tables);
@@ -117,19 +119,21 @@ class IndexController extends Controller
         if ($controller_override == TRUE) {
             $string = trim($post['exclude_controllers']);
             $string = preg_replace('/[^\w|,]/', '', $string);
-            $array  = explode(',', $string);
+            $array = explode(',', $string);
             $appSetup->runCrud(TRUE, $array, $use_toggle, $tables);
         } else {
             $appSetup->runCrud(FALSE, [], $use_toggle, $tables);
         }
 
-        return $this->redirect(AppHelpers::formatUrl(['crud/view']));
+        die("DONE");
+        return $this->redirect(['/crud/view']);
     }
 
 
     public function actionView()
     {
-        $array = AppFile::recursiveDirectory(Yii::getAlias('@backend') . '/views', '', '');
+        $path = Yii::getAlias('@backend') . '/views';
+        $array = AppFile::recursiveDirectory($path, '');
 
         return $this->render('view', [
             'array' => $array,

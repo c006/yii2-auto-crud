@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: User
- * Date: 3/7/2015
- * Time: 6:05 PM
- */
+
 use c006\crud\assets\AppFile;
 use yii\helpers\Html;
 
@@ -32,7 +27,7 @@ use yii\helpers\Html;
     }
 </style>
 <div class="boundary">
-    <?= Html::button('Back to Crud', ['class' => 'btn btn-primary', 'name' => 'button-crud']) ?>
+    <?= Html::button('Back to Crud', ['class' => 'btn btn-primary', 'id' => 'button-crud']) ?>
 </div>
 <div class="boundary">
     <div class="title">Backend</div>
@@ -56,7 +51,7 @@ use yii\helpers\Html;
     jQuery(function () {
         jQuery('#button-crud')
             .bind('click', function () {
-                      document.location.href = '<?= (Yii::$app->urlManager->enablePrettyUrl) ? '/crud' : '?/r=crud' ?>';
+                      document.location.href = '<?= (Yii::$app->urlManager->enablePrettyUrl) ? '/crud' : '?r=/crud' ?>';
                   });
     });
 </script>

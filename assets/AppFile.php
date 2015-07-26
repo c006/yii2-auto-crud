@@ -27,7 +27,7 @@ class AppFile
      *
      * @return array
      */
-    public static function autoLoadClassArray($directory_array)
+    static public function autoLoadClassArray($directory_array)
     {
         $array_out = array();
         foreach ($directory_array as $items) {
@@ -48,16 +48,28 @@ class AppFile
      *
      * @return mixed
      */
-    public static function useForwardSlash($path)
+    static public function useForwardSlash($path)
     {
         return str_replace('/', chr(92), $path);
+    }
+
+    /**
+     * Unifies all slashes to backslash
+     *
+     * @param $path
+     *
+     * @return mixed
+     */
+    static public function useBackslash($path)
+    {
+        return str_replace(chr(92), '/', $path);
     }
 
     /**
      * @param $source
      * @param $dest
      */
-    public static function copyDirectory($source, $dest)
+    static public function copyDirectory($source, $dest)
     {
         if (!is_dir($source))
             return;
@@ -80,7 +92,7 @@ class AppFile
      *
      * @return bool
      */
-    public static function deleteDirectory($source)
+    static public function deleteDirectory($source)
     {
         if (!is_dir($source))
             return FALSE;
@@ -104,7 +116,7 @@ class AppFile
     /**
      * @param $path
      */
-    public static function deleteEmptyDirectory($path)
+    static public function deleteEmptyDirectory($path)
     {
         @unlink($path);
     }
@@ -114,7 +126,7 @@ class AppFile
      *
      * @return mixed
      */
-    public static function removeFileInPath($path)
+    static public function removeFileInPath($path)
     {
         $file = self::fileFromPath($path);
 
@@ -127,7 +139,7 @@ class AppFile
      *
      * @return mixed
      */
-    public static function  fileFromPath($path)
+    static public function  fileFromPath($path)
     {
         $path = str_replace('\\', '/', $path);
         $f = explode('/', $path);
@@ -140,7 +152,7 @@ class AppFile
      *
      * @return mixed
      */
-    public static function getLastFolderInPath($path)
+    static public function getLastFolderInPath($path)
     {
         $path = AppFile::useBackslash($path);
         $array = explode('/', $path);
@@ -148,24 +160,13 @@ class AppFile
         return $array[ sizeof($array) - 1 ];
     }
 
-    /**
-     * Unifies all slashes to backslash
-     *
-     * @param $path
-     *
-     * @return mixed
-     */
-    public static function useBackslash($path)
-    {
-        return str_replace(chr(92), '/', $path);
-    }
 
     /**
      * @param $path
      *
      * @return mixed
      */
-    public static function getFirstFolderInPath($path)
+    static public function getFirstFolderInPath($path)
     {
         $path = AppFile::useBackslash($path);
         $array = explode('/', $path);
@@ -178,7 +179,7 @@ class AppFile
      *
      * @return string
      */
-    public static function readFile($filePath)
+    static public function readFile($filePath)
     {
         return file_get_contents($filePath);
     }
@@ -189,7 +190,7 @@ class AppFile
      *
      * @return array
      */
-    public static function recursiveDirectory($path, $base_path)
+    static public function recursiveDirectory($path, $base_path)
     {
         $array = array();
         $items = scandir($path);
@@ -229,7 +230,7 @@ class AppFile
      *
      * @return mixed
      */
-    public static function  fileExtension($file_name)
+    static public function  fileExtension($file_name)
     {
         $f = explode('.', $file_name);
 
@@ -241,7 +242,7 @@ class AppFile
      *
      * @return int
      */
-    public static function folderCountInPath($path)
+    static public function folderCountInPath($path)
     {
         $path = AppFile::useBackslash($path);
         $path = AppFile::removeTrailingBackSlash($path);
@@ -254,7 +255,7 @@ class AppFile
      *
      * @return string
      */
-    public static function removeTrailingBackSlash($path)
+    static public function removeTrailingBackSlash($path)
     {
         if (substr($path, strlen($path) - 1, 1) == "/") {
             return substr($path, 0, strlen($path) - 1);
@@ -268,7 +269,7 @@ class AppFile
      *
      * @return mixed
      */
-    public static function removeDoubleBackslash($path)
+    static public function removeDoubleBackslash($path)
     {
         return str_replace('//', '/', $path);
     }
@@ -277,7 +278,7 @@ class AppFile
      * @param $filePath
      * @param $data
      */
-    public static function writeFile($filePath, $data)
+    static public function writeFile($filePath, $data)
     {
         @unlink($filePath);
         try {
@@ -295,7 +296,7 @@ class AppFile
      *
      * @return string
      */
-    public static function cleanFileName($file)
+    static public function cleanFileName($file)
     {
         $ext = self::fileExtension($file);
         $file = self::removeFileExtension($file);
@@ -309,11 +310,29 @@ class AppFile
      *
      * @return string
      */
-    public static function  removeFileExtension($file_name)
+    static public function  removeFileExtension($file_name)
     {
         $f = explode('.', $file_name);
         unset($f[ sizeof($f) - 1 ]);
 
         return implode('.', $f);
     }
+
+    /**
+     * @param $path
+     */
+    static public function buildPath($path)
+    {
+        $path = self::useBackslash($path);
+        $array = explode('/', $path);
+        $build = '';
+        foreach ($array as $item) {
+            $build .= '/' . $item;
+            if (!is_dir($build)) {
+                mkdir($build);
+            }
+        }
+    }
+
+
 }

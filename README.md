@@ -70,6 +70,9 @@ Pretty Url's ```/crud```
 No pretty Url's ```index.php?r=crud```
 
 
+Update default values
+`vendor/c006/yii2-auto-crud/models/Crud.php`
+
 Errors
 ---------
 

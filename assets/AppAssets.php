@@ -34,7 +34,7 @@ class AppAssets extends AssetBundle
      * @inheritdoc
      */
     public $js = [
-        'c006-crud.js',
+//        'c006-crud.js',
     ];
 
     /**
