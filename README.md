@@ -1,6 +1,11 @@
 Yii2 Auto CRUD
 ===================
 
+**New Version July, 2015**
+
+Now with template support.
+
+
 Overview
 ---------
 
