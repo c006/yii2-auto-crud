@@ -125,7 +125,6 @@ class IndexController extends Controller
             $appSetup->runCrud(FALSE, [], $use_toggle, $tables);
         }
 
-        die("DONE");
         return $this->redirect(['/crud/view']);
     }
 
