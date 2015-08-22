@@ -36,27 +36,22 @@ class Crud extends ActiveRecord
     /**
      * @var bool
      */
-    public $overwrite_models = 0;
+    public $process_models = 0;
+
+    /**
+     * @var string
+     */
+    public $exclude_models = '';
 
     /**
      * @var bool
      */
-    public $overwrite_controllers = 0;
+    public $process_controllers = 0;
 
     /**
-     * @var
+     * @var string
      */
-    public $exclude_models;
-
-    /**
-     * @var
-     */
-    public $exclude_controllers;
-
-    /**
-     * @var int
-     */
-    public $use_toggle = 0;
+    public $exclude_controllers = '';
 
     /**
      * @var array
