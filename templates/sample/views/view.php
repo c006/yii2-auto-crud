@@ -23,9 +23,9 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-view">
 
-    <h1><?= "<?= " ?>Html::encode($this->title) ?></h1>
+    <h1 class="title-large"><?= "<?= " ?>Html::encode($this->title) ?></h1>
 
-    <p>
+    <div class="item-container margin-top-30 margin-bottom-30">
         <?= "<?= " ?>Html::a(<?= $generator->generateString('Update') ?>, ['update', <?= $urlParams ?>], ['class' => 'btn btn-primary']) ?>
         <?= "<?= " ?>Html::a(<?= $generator->generateString('Delete') ?>, ['delete', <?= $urlParams ?>], [
             'class' => 'btn btn-danger',
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-    </p>
+
 
     <?= "<?= " ?>DetailView::widget([
         'model' => $model,
@@ -54,4 +54,5 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         ],
     ]) ?>
 
+    </div>
 </div>

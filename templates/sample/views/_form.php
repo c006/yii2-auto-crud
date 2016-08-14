@@ -26,6 +26,8 @@ use yii\widgets\ActiveForm;
 
 <div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-form">
 
+    <div class="item-container margin-top-30 margin-bottom-30">
+
     <?= "<?php " ?>$form = ActiveForm::begin(); ?>
 
 <?php foreach ($generator->getColumnNames() as $attribute) {
@@ -39,4 +41,5 @@ use yii\widgets\ActiveForm;
 
     <?= "<?php " ?>ActiveForm::end(); ?>
 
+    </div>
 </div>
