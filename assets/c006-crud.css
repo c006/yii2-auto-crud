@@ -1,44 +1,44 @@
 
 .c006-info {
-      margin-top  : 30px;
-      padding     : 3px;
-      font-family : Arial, Helvetica, Sans-serif;
-      font-size   : 1em;
-      line-height : 1.2em;
-      color       : #666666;
-      border      : 1px dotted #CCCCCC;
+    margin-top  : 30px;
+    padding     : 3px;
+    font-family : Arial, Helvetica, Sans-serif;
+    font-size   : 1em;
+    line-height : 1.2em;
+    color       : #666666;
+    border      : 1px dotted #CCCCCC;
 }
 
 .c006-complete {
-      margin      : 50px auto auto;
-      padding     : 3px;
-      font-family : Arial, Helvetica, Sans-serif;
-      font-size   : 2em;
-      color       : #3C8FCE;
-      text-align  : center;
+    margin      : 50px auto auto;
+    padding     : 3px;
+    font-family : Arial, Helvetica, Sans-serif;
+    font-size   : 2em;
+    color       : #3C8FCE;
+    text-align  : center;
 }
 
 .c006-title {
-      margin-bottom   : 20px;
-      font-family     : Arial, Helvetica, Sans-serif;
-      font-size       : 2em;
-      font-weight     : bold;
-      color           : #3C8FCE;
-      text-align      : left;
-      text-decoration : underline;
+    margin-bottom   : 20px;
+    font-family     : Arial, Helvetica, Sans-serif;
+    font-size       : 2em;
+    font-weight     : bold;
+    color           : #3C8FCE;
+    text-align      : left;
+    text-decoration : underline;
 }
 
 .c006-row {
-      margin-top : 30px;
+    margin-top : 30px;
 }
 
 .c006-add-all {
-      margin-left : 20px;
-      font-weight : normal;
-      color       : #7690A3;
-      cursor      : pointer;
+    margin-left : 20px;
+    font-weight : normal;
+    color       : #7690A3;
+    cursor      : pointer;
 }
 
 .c006-add-all:hover {
-      color : #FF6E00;
+    color : #FF6E00;
 }

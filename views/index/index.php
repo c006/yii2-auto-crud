@@ -4,9 +4,6 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
 /** @var $model /c006/crud/model/Crud */
-
-$this->title = 'CRUD';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <style>
     .title {
@@ -16,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
         color      : #e7ad24;
     }
 
-    label[for=crud-databasetables] {
+    label[for=migrationutility-databasetables] {
         display : block;
     }
 
@@ -63,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'action' => (Yii::$app->urlManager->enablePrettyUrl) ? '/crud/default/process' : 'index.php?r=crud/index/process',
         ]);
         ?>
-        <div class="title-large">Auto CRUD</div>
+        <div class="c006-title">Yii2 Auto CRUD</div>
 
         <div class="inline-elements">
             <div>
@@ -97,21 +94,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
 
-        <div class="inline-elements">
-            <div style="width: 80%">
-                <?= $form->field($model, 'tables')
-                    ->label('Tables to Process')
-                    ->hint('Change to textarea and back to easily view tables') ?>
-            </div>
-            <div style="width: 20%; vertical-align: middle; text-align: right">
-                <?= Html::button('Change View', ['class' => 'btn btn-success', 'id' => 'button-tables-convert']) ?>
-            </div>
-        </div>
+        <?= $form->field($model, 'tables')->hint('Tables to be processed') ?>
 
 
         <div class="inline-elements">
             <div>
-                <?= $form->field($model, 'process_models')->dropDownList(['No', 'Yes'])->hint('Skip or run processing models') ?>
+                <?= $form->field($model, 'overwrite_models')->dropDownList(['No', 'Yes'])->hint('Overwrite existing models') ?>
             </div>
             <div>
                 <?= $form->field($model, 'exclude_models')->hint('Do Not add .php') ?>
@@ -121,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="inline-elements">
             <div>
-                <?= $form->field($model, 'process_controllers')->dropDownList(['No', 'Yes'])->hint('Skip or run processing controllers') ?>
+                <?= $form->field($model, 'overwrite_controllers')->dropDownList(['No', 'Yes'])->hint('Overwrite existing controllers') ?>
             </div>
             <div>
                 <?= $form->field($model, 'exclude_controllers')->hint('Do Not add .php') ?>
@@ -148,79 +136,51 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= c006\spinner\SubmitSpinner::widget(['form_id' => $form->id]); ?>
         <?php endif ?>
 
-    </div>
-</div>
 
-<script type="text/javascript">
-    jQuery(function () {
-        jQuery('#button-add-all')
-            .click(function () {
-                var $tables = jQuery('#crud-tables');
-                $tables.val("");
-                jQuery("#crud-database_tables > option")
-                    .each(function () {
-                        if (this.text != 'migration' && this.text != 'user') {
-                            $tables.val($tables.val() + ',' + this.text);
+        <script type="text/javascript">
+            jQuery(function () {
+                jQuery('#button-add-all')
+                    .click(function () {
+                        var $tables = jQuery('#crud-tables');
+                        $tables.val("");
+                        jQuery("#crud-database_tables > option")
+                            .each(function () {
+                                if (this.text != 'migration' && this.text != 'user') {
+                                    $tables.val($tables.val() + ',' + this.text);
+                                }
+                            });
+                        $tables.val($tables.val().replace(/^,+/, ''));
+                    });
+
+                jQuery('#crud-namespace')
+                    .bind('blur', function () {
+                        var $this = jQuery(this);
+                        var _namespace = $this.val();
+                        _namespace = _namespace.replace(/^\//, '');
+                        _namespace = _namespace.replace(/$\//, '');
+                        jQuery('#crud-models_path').val(_namespace + '/models');
+                        jQuery('#crud-models_search_path').val(_namespace + '/models/search');
+                        jQuery('#crud-controllers_path').val(_namespace + '/controllers');
+                    });
+
+                jQuery('#crud-database_tables')
+                    .bind('change',
+                    function () {
+                        var val = jQuery(this).find('option:selected').text();
+                        if (val) {
+                            var $elm = jQuery('#crud-tables');
+                            var val2 = $elm.val().replace(val + ',', '');
+                            val = val2 + ',' + val;
+                            val = val.replace(/\s+/gi, '').replace(/,+/gi, ',').replace(/^,/, '');
+                            $elm.val(val);
                         }
                     });
-                $tables.val($tables.val().replace(/^,+/, ''));
-            });
 
-        jQuery('#crud-namespace')
-            .bind('blur', function () {
-                var $this = jQuery(this);
-                var _namespace = $this.val();
-                _namespace = _namespace.replace(/^\//, '');
-                _namespace = _namespace.replace(/$\//, '');
-                jQuery('#crud-models_path').val(_namespace + '/models');
-                jQuery('#crud-models_search_path').val(_namespace + '/models/search');
-                jQuery('#crud-controllers_path').val(_namespace + '/controllers');
+                jQuery('.namespace-add')
+                    .click(function () {
+                        var $this = jQuery(this);
+                        jQuery('#crud-namespace').val($this.html()).focus().blur();
+                    });
             });
-
-        jQuery('#crud-database_tables')
-            .bind('change',
-            function () {
-                var val = jQuery(this).find('option:selected').text();
-                if (val) {
-                    var $elm = jQuery('#crud-tables');
-                    var val2 = $elm.val().replace(val + ',', '');
-                    val = val2 + ',' + val;
-                    val = val.replace(/\s+/gi, '').replace(/,+/gi, ',').replace(/^,/, '');
-                    $elm.val(val);
-                }
-            });
-
-        jQuery('.namespace-add')
-            .click(function () {
-                var $this = jQuery(this);
-                jQuery('#crud-namespace').val($this.html()).focus().blur();
-            });
-
-        jQuery('#button-tables-convert')
-            .click(function () {
-                var $this = jQuery('#crud-tables');
-                var $parent = $this.parent();
-                if ($this.attr('type') == "text") {
-                    var $textarea = jQuery(document.createElement('textarea'));
-                    $textarea.attr('id', $this.attr('id'));
-                    $textarea.attr('type', 'textarea');
-                    $textarea.attr('class', $this.attr('class'));
-                    $textarea.attr('name', $this.attr('name'));
-                    $textarea.html($this.val().replace(/\s+/g, '').replace(/,/g, "\n"));
-                    $this.remove();
-                    jQuery($textarea).insertAfter($parent.find('> label'));
-                } else {
-                    var $input = jQuery(document.createElement('input'));
-                    $input.attr('id', $this.attr('id'));
-                    $input.attr('type', 'text');
-                    $input.attr('class', $this.attr('class'));
-                    $input.attr('name', $this.attr('name'));
-                    $input.val($this.html().replace(/[\r\n]/g, ", "));
-                    $this.remove();
-                    jQuery($input).insertAfter($parent.find('> label'));
-                }
-                jQuery('#crud-tables').blur();
-            });
-    });
-</script>
+        </script>
 

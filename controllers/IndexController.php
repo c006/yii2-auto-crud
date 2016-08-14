@@ -2,7 +2,6 @@
 
 namespace c006\crud\controllers;
 
-use c006\core\assets\CoreHelper;
 use c006\crud\assets\AppAssets;
 use c006\crud\assets\AppFile;
 use c006\crud\assets\AppSetup;
@@ -21,9 +20,7 @@ class IndexController extends Controller
      */
     function init()
     {
-        if (CoreHelper::checkLogin() && CoreHelper::isGuest()) {
-            return $this->redirect('/');
-        }
+
     }
 
 
@@ -98,10 +95,10 @@ class IndexController extends Controller
             $this->redirect('/');
         $post = $_POST['Crud'];
         $db = $post['db_connection'];
-
-        $tables = (isset($post['tables'])) ? explode(',', preg_replace('/[\n\r]+/', ',', $post['tables'])) : [];;
-        $process_models = (isset($post['process_models']) && $post['process_models']) ? TRUE : FALSE;
-        $process_controller = (isset($post['process_controllers']) && $post['process_controllers']) ? TRUE : FALSE;
+        $tables = (isset($post['tables'])) ? explode(',', $post['tables']) : [];;
+        $model_override = (isset($post['override_models']) && $post['override_models']) ? TRUE : FALSE;
+        $controller_override = (isset($post['override_controllers']) && $post['override_controllers']) ? TRUE : FALSE;
+        $use_toggle = 1; //(isset($post['use_toggle']) && $post['use_toggle']) ? TRUE : FALSE;
         /* */
         $appSetup = new AppSetup($db);
         $appSetup->models_path = $post['models_path'];
@@ -111,18 +108,21 @@ class IndexController extends Controller
         $appSetup->crud_template = $post['crud_template'];
         $appSetup->crud_template_path = $post['crud_template_path'];
 
-        if ($process_models) {
+        if ($model_override == TRUE) {
             $string = trim($post['exclude_models']);
             $string = preg_replace('/[^\w|,]/', '', $string);
             $array = explode(',', $string);
             $appSetup->runModels(TRUE, $array, $tables);
+        } else {
+            $appSetup->runModels(FALSE, [], $tables);
         }
-
-        if ($process_controller) {
+        if ($controller_override == TRUE) {
             $string = trim($post['exclude_controllers']);
             $string = preg_replace('/[^\w|,]/', '', $string);
             $array = explode(',', $string);
-            $appSetup->runCrud(TRUE, $array, $tables);
+            $appSetup->runCrud(TRUE, $array, $use_toggle, $tables);
+        } else {
+            $appSetup->runCrud(FALSE, [], $use_toggle, $tables);
         }
 
         return $this->redirect(['/crud/view']);

@@ -2,6 +2,7 @@
 
 namespace c006\crud\assets;
 
+use c006\crud\assets\AppFile;
 use Yii;
 
 /**
@@ -137,11 +138,12 @@ class AppSetup
     }
 
     /**
-     * @param $override
+     * @param       $override
      * @param array $array_exclude
+     * @param bool $use_toggle
      * @param array $models
      */
-    public function runCrud($override, $array_exclude = [], $models = array())
+    public function runCrud($override, $array_exclude = [], $use_toggle = FALSE, $models = array())
     {
 
         $path = Yii::getAlias('@' . $this->models_path);
@@ -154,7 +156,7 @@ class AppSetup
             $path_new = AppFile::useBackslash($path . '/' . $modelName . '.php');
             if (is_file(realpath($path_new))) {
                 if (in_array($model, $array_exclude) == FALSE || $override == TRUE) {
-                    self::makeCrud($modelName);
+                    self::makeCrud($modelName, $use_toggle);
                 }
             } else {
                 die("Model does not exist: " . $path_new);
@@ -163,9 +165,10 @@ class AppSetup
     }
 
     /**
-     * @param $model
+     * @param      $model
+     * @param bool $use_toggle
      */
-    private function makeCrud($model)
+    private function makeCrud($model, $use_toggle = FALSE)
     {
 
         $generator = new \yii\gii\generators\crud\Generator();
@@ -183,11 +186,17 @@ class AppSetup
 
         foreach ($files as $file) {
             $file->path = AppFile::useBackslash($file->path);
+            //echo "<BR>" . $file->path;
             $dir = AppFile::removeFileInPath($file->path);
             AppFile::buildPath($dir);
             $content = $file->content;
 
             if (strpos($file->path, '/views/') != FALSE) {
+                if ($use_toggle) {
+                    $content = preg_replace('/->checkbox/', '->toggle', $content);
+                    $content = preg_replace('/(yii.widgets.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
+                    $content = preg_replace('/(yii.bootstrap.ActiveForm)/', 'c006\\activeForm\\ActiveForm', $content);
+                }
                 $dir_name = trim(preg_replace('/([A-Z])/', " $1", $model));
                 $dir_name = strtolower(str_replace(' ', '-', $dir_name));
                 $path = AppFile::useBackslash(Yii::getAlias('@' . $this->controller_path)) . '/' . $dir_name;
@@ -195,6 +204,7 @@ class AppSetup
                 $path = preg_replace('/\/controllers\//', '/views/', $path);
                 AppFile::buildPath($path);
                 $file->path = $path . '/' . $file->path;
+
             }
 
             AppFile::writeFile($file->path, $content);

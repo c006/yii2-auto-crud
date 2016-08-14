@@ -51,7 +51,7 @@ use yii\helpers\Html;
     jQuery(function () {
         jQuery('#button-crud')
             .bind('click', function () {
-                document.location.href = '<?= (Yii::$app->urlManager->enablePrettyUrl) ? '/crud' : '?r=/crud' ?>';
-            });
+                      document.location.href = '<?= (Yii::$app->urlManager->enablePrettyUrl) ? '/crud' : '?r=/crud' ?>';
+                  });
     });
 </script>

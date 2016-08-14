@@ -1,11 +1,9 @@
 Yii2 Auto CRUD
 ===================
 
-**New Version August, 2015**
+**New Version July, 2015**
 
-+ Now with template support
-+ Yes/No process models
-+ Yes/No process controllers
+Now with template support.
 
 
 Overview
