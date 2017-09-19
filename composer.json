@@ -1,0 +1,27 @@
+{
+  "name": "c006/yii2-auto-crud",
+  "description": "Adds a model and crud for each table in the database",
+  "type": "yii2-extension",
+  "keywords": [
+    "yii2",
+    "extension",
+    "widgets",
+    "crud",
+    "gii"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jon Chambers",
+      "email": "jchambers.dev@gmail.com"
+    }
+  ],
+  "require-dev": {
+    "c006/yii2-activeform": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "c006\\crud\\": ""
+    }
+  }
+}
