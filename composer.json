@@ -17,7 +17,7 @@
     }
   ],
   "require-dev": {
-    "c006/yii2-activeform": "dev-master"
+    "c006/yii2-core": "*"
   },
   "autoload": {
     "psr-4": {
